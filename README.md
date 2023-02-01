@@ -1,92 +1,225 @@
-# aTLAS EvalUtil
+# aTLAS Evaluation Result Utility
 
 
+## Prerequisites
+- Python 3.9+
+- Pip 21+
+- Setuptools 56+
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.hrz.tu-chemnitz.de/vsr/phd/siegert/atlas-evalutil.git
-git branch -M main
-git push -uf origin main
+Use below command(s) to determine if your environment meets the prerequisites
+```bash
+python -V                       # Python version
+python -m pip -V                # Pip version
+python -m pip show setuptools   # Setuptools version
 ```
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.hrz.tu-chemnitz.de/vsr/phd/siegert/atlas-evalutil/-/settings/integrations)
+## Install
+Follow one of the following steps to install `atlas-evalutil` utility
+> It is recommended to install inside a **virtual environment**
 
-## Collaborate with your team
+Install from `wheel`. From terminal enter:
+```bash
+pip install <file-name>.whl
+```
+Install from `sdist`. From terminal enter:
+```bash
+pip install <file-name>.tar.gz
+```
+Install from the project directory. Navigate to project directory where `setup.py` is located and enter:
+```bash
+pip install .
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
+## Run
+After successful installation `atlas-evalutil` command should be available globally from terminal.
+```bash
+atlas-evalutil
+```
+> Make sure the `bin` or `Scripts` directory of your python installation is included in path environment variable unless you are using any virtual environment.
 
-Use the built-in continuous integration in GitLab.
+Alternatively, can be executed as a python module
+```bash
+python -m atlas.evalutil
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-***
+## Inputs
+An input directory is expected to contain the required input items listed below:
+- directories: `evaluator_results`
+- files: `scenario_sizes.csv`
 
-# Editing this README
+Also, the input directory can be organized into directories as v0, v1, v2 etc. to specify multiple version of evaluation results. In such case the name of the sub directories within input directory must start with `v` followed by a `number`.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Example directory structures are provided below:
+~~~
+input
+|___ evaluator_results
+|    |___ sr_20230107_222428_160.py
+|    |___ sr_20230107_222438_049.py
+|    ...
+|
+|___ scenario_sizes.csv
+~~~
+or,
+~~~
+input
+|___ v0
+|    |___ evaluator_results
+|    |    |___ sr_20230107_222428_160.py
+|    |    |___ sr_20230107_222438_049.py
+|    |    ...
+|    |
+|    |___ scenario_sizes.csv
+|
+|___ v1
+|    |___ evaluator_results
+|    |    |___ sr_20230107_222533_196.py
+|    |    |___ sr_20230109_003206_619.py
+|    |    ...
+|    |
+|    |___ scenario_sizes.csv
+|
+|___ ...
+~~~
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-## Name
-Choose a self-explaining name for your project.
+## Outputs
+When `--export` option is specified, the output is stored at default output directory or directory specified through `--output-dir` option. See [here](#global-options) for more information. A typical directory structure is as follows:
+~~~
+output
+|___ memory_usage.svg
+|___ time_usage.svg
+|___ scenarios.txt
+~~~
+or,
+~~~
+output
+|___ v0
+|    |___ memory_usage.svg
+|    |___ time_usage.svg
+|    |___ scenario.txt
+|
+|___ v1
+|    |___ memory_usage.svg
+|    |___ time_usage.svg
+|    |___ scenarios.txt
+|
+|___ ...
+~~~
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Commands
+This section documents all the available commands and options of `atlas-evalutil`.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Calling `atlas-evalutil` from the command-line also displays the complete list of commands. You can combine `--help` with any of the commands for more formation.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Global options
+- `--help (-h)`: Displays help information.
+- `--config-file (-c)`: Custom configuration file (TOML) to override configurations for the session
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Here are some use cases. Please refer below for more detail on the sub command(s).
+```bash
+atlas-evalutil scenario
+atlas-evalutil chart --time-usage
+atlas-evalutil chart --memory-usage
+```
+Supplying custom config file
+```bash
+atlas-evalutil --config-file ./config.toml scenario
+atlas-evalutil --config-file ./config.toml chart --time-usage
+atlas-evalutil --config-file ./config.toml chart --memory-usage
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### scenario
+The `scenario` command displays the list of scenarios ran for evaluation.
+```bash
+atlas-evalutil scenario
+```
+You can optionally save the output into output directory using `--export` option.
+```bash
+atlas-evalutil scenario --export
+```
+#### Options
+- `--help (-h)`: Displays help information.
+- `--input-version (-v)`: Not needed if an input directory contains the required input items directly. However the input directory can have multiple version of evaluation data organized into directories as v0, v1, v2 etc. ([see input directory structure](#inputs)). In such a scenario this option is required to specify the version of input data to be selected.
+- `--input-dir (-i)`: Sets the path of input directory (default: data/input). If `--input-version` is specified then a sub directory with the version name is expected inside the input directory.
+- `--output-dir (-o)`: Sets the path of the output directory used by `--save` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
+- `--export (-e)`: Saves the list of scenario names in output directory as text file
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### chart
+The `chart` command displays and/or save a desired chart. Currently two types of charts are implemented which can be switched by `--time-usage` and `--memory-usage` options.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+For example the following command displays the memory usage chart
+```bash
+atlas-evalutil chart --memory-usage
+```
+![memory_usage](./docs/screen-shots/memory_usage.png)
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+The following command displays the time usage chart
+```bash
+atlas-evalutil chart --time-usage
+```
+![time_usage|320x271](./docs/screen-shots/time_usage.png)
 
-## License
-For open source projects, say how it is licensed.
+You can optionally save the output into output directory using `--save` options.
+```bash
+atlas-evalutil chart --time-usage --export
+```
+You can specify the output format using `--export-format` option. Supported formats are `jpg`, `png`, `svg`, `pdf`. The default format is `svg`
+```bash
+atlas-evalutil scenario --export --export-format "pdf"
+```
+You can also specify the necessary axis units through optional `--memory-unit` and/or `--time-unit` options. Default memory unit is in `Megabytes` and time unit is in `seconds`
+```bash
+atlas-evalutil chart --time-usage --time-unit "m"
+atlas-evalutil chart --time-usage --memory-unit "GB"
+atlas-evalutil chart --time-usage --time-unit "m" --memory-unit "GB"
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+atlas-evalutil chart --memory-usage --time-unit "m"
+atlas-evalutil chart --memory-usage --memory-unit "GB"
+atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB"
+```
+A combination of options is also possible 
+```bash
+atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export
+atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export --export-format "pdf"
+```
+#### Options
+- `--help (-h)`: Displays help information.
+- `--input-version (-v)`: Not needed if an input directory contains the required input items directly. However the input directory can have multiple version of evaluation data organized into directories as v0, v1, v2 etc. ([see input directory structure](#inputs)). In such a scenario this option is required to specify the version of input data to be selected.
+- `--input-dir (-i)`: Sets the path of input directory (default: data/input). If `--input-version` is specified then a sub directory with the version name is expected inside the input directory.
+- `--output-dir (-o)`: Sets the path of the output directory used by `--save` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
+- `--time-usage (-t)`: Displays the time usage chart
+- `--memory-usage (-m)`: Displays the memory usage chart
+- `--time-unit (-tu)`: Sets time unit for relevant axis of the desired chart. See help for possible options.
+- `--memory-unit (-mu)`: Sets memory unit for relevant axis of the desired chart. See help for possible options.
+- `--export (-e)`: Saves the chart as a SVG file in output directory
+- `--export-format (-f)`: Format of exported chart. See help for possible options.
+
+
+### config
+The `config` command can be used to access, set and/or reset configuration items.
+```bash
+atlas-evalutil config --list
+atlas-evalutil config --set input_dir="data/input"
+atlas-evalutil config --set input_dir="data/input" output_dir="data/output"
+atlas-evalutil config --get input_dir
+atlas-evalutil config --reset input_dir
+```
+#### Options
+- `--help (-h)`: Displays help information.
+- `--list (-l)`: Display list of all configurations
+- `--get (-g)`:  Displays a specific config item
+- `--set (-s)`: Sets the config item(s). Expected argument(s) in `key=value` format
+- `--reset (-r)`: Resets the config item with the item specified in active config file
+
+By default the configuration items are stored at `atlas-evalutil.toml` inside installation directory. The configurations can be overridden at user level by placing `atlas-evalutil.toml` file in user home directory. A further overriding is possible by placing another `atlas-evalutil.toml` file at working directory. Finally, it is also possible to override all of them using the global option `--config-file` option.
+
+
+
+## Further Development
+Refer to [README.dev.md](./README.dev.md) for further instruction to extend the project.
