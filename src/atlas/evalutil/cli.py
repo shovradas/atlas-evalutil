@@ -67,6 +67,11 @@ def override_config(args: dict):
         config.append_path(path)
         config.reload()
 
+    if 'input_dir' in args and args['input_dir']:
+        config['input_dir'] = args['input_dir']
+    if 'output_dir' in args and args['output_dir']:
+        config['output_dir'] = args['output_dir']
+
     if 'input_version' in args and args['input_version']:
         config['input_dir'] = f"{config['input_dir']}/{args['input_version']}"
         config['output_dir'] = f"{config['output_dir']}/{args['input_version']}"

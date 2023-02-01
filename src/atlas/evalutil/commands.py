@@ -66,7 +66,7 @@ class ChartCommand(CommandBase):
         # Formatting
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='index', inplace=True)
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
-        time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
+        time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()        
 
         colors = (c for c in ['red', 'green', 'blue', 'cyan'])
         # display and/or save

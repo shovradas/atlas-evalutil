@@ -38,7 +38,7 @@ def get_time_usage() -> DataFrame:
     data_frame = get_evaluator_results(['scenario_name', 'atlas_times'])
 
     data_frame = data_frame.join(DataFrame(data_frame.pop('atlas_times').values.tolist()))
-    data_frame = data_frame.groupby("scenario_name").mean()
+    data_frame = data_frame.groupby("scenario_name").mean()    
 
     return data_frame
 
