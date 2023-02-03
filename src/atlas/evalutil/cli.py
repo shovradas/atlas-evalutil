@@ -1,6 +1,7 @@
 import sys
 from argparse import ArgumentParser, Namespace
 
+from atlas.evalutil.chart_utils import ChartType
 from atlas.evalutil.commands import ScenarioCommand, ChartCommand, ConfigCommand
 from atlas.evalutil.export_utils import ExportFormat
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit
@@ -34,6 +35,7 @@ def build_parser():
     group.add_argument('--memory-usage', '-m', dest='action', action="store_const", const='memory_usage', help='displays chart for ram usage')
     chart_parser.add_argument('--memory-unit', '-mu', type=MemoryUnit, required=False, default=MemoryUnit.MEGABYTE, help=f"unit of ram usage in {{{', '.join([e.value for e in MemoryUnit])}}} (default: {MemoryUnit.MEGABYTE.value})")
     chart_parser.add_argument('--time-unit', '-tu', type=TimeUnit, required=False, default=TimeUnit.SECOND, help=f"unit of time in {{{', '.join([e.value for e in TimeUnit])}}} (default: {TimeUnit.SECOND.value})")
+    chart_parser.add_argument('--chart-type', '-ct', type=ChartType, required=False, default=ChartType.LINE, help=f"type of chart within {{{', '.join([e.value for e in ChartType])}}} (default: {ChartType.LINE.value})")
 
     # config command
     config_parser = subparsers.add_parser('config', description='Config Command', help='config management')

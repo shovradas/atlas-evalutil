@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from atlas.evalutil import data
 from atlas.evalutil import validators
+from atlas.evalutil.chart_utils import ChartType
 from atlas.evalutil.color_utils import generate_gradient_colors
 from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
@@ -54,7 +55,7 @@ class ChartCommand(CommandBase):
         super().__init__(args)
         validators.validate_input_directory()
 
-    def time_usage(self, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
+    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
         # get data
         time_usage = data.get_time_usage()
         scenario_sizes = data.get_scenario_sizes()
@@ -69,18 +70,25 @@ class ChartCommand(CommandBase):
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
 
-        color_iterator = generate_gradient_colors(skip=3)
+        color_iterator = generate_gradient_colors(skip=2)
         # display and/or save
-        time_usage.plot(
-            figsize=(12, 8),
-            rot=45,
-            title=f"Scenario vs Time usage per size",
-            xlabel="Scenario Names",
-            ylabel=f"Time ({time_unit.value}) / Size ({memory_unit.value})",
-            xticks=range(time_usage.index.size),
-            linewidth=2,
-            color={col: next(color_iterator) for col in sorted(time_usage.columns)}
-        )
+        if chart_type == ChartType.LINE:
+            time_usage.plot(
+                figsize=(12, 8),
+                linewidth=2,
+                color={col: next(color_iterator) for col in sorted(time_usage.columns)}
+            )
+        elif chart_type == ChartType.SCATTER:
+            time_usage['scenario_name'] = time_usage.index
+            cols = time_usage.columns[0:-1]
+            ax = time_usage.plot(kind='scatter', x='scenario_name', y=cols[0], label=cols[0], color=next(color_iterator), figsize=(12, 8))
+            for col in cols[1:]:
+                ax = time_usage.plot(kind='scatter', x='scenario_name', y=col, label=col, color=next(color_iterator), ax=ax)
+        
+        plt.title(f"Scenario vs Time usage per size")
+        plt.xlabel("Scenario Names")
+        plt.ylabel(f"Time ({time_unit.value}) / Size ({memory_unit.value})")
+        plt.xticks(range(time_usage.index.size), time_usage.index, rotation=45)
         plt.tight_layout(pad=4)
 
         if export:
@@ -91,7 +99,7 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage(self, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
+    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
         # get data
         memory_usage = data.get_memory_usage()    
 
@@ -105,14 +113,22 @@ class ChartCommand(CommandBase):
 
         color_iterator = generate_gradient_colors()
         # display and/or save
-        memory_usage.plot(
-            figsize=(12, 8),
-            title=f"Time vs Memory usages",
-            xlabel=f"Time ({time_unit.value})",
-            ylabel=f"Memory Usage ({memory_unit.value})",
-            linewidth=2,
-            color={col: next(color_iterator) for col in memory_usage.columns}          
-        )
+        if chart_type == ChartType.LINE:
+            memory_usage.plot(
+                figsize=(12, 8),
+                linewidth=2,
+                color={col: next(color_iterator) for col in memory_usage.columns}          
+            )
+        elif chart_type == ChartType.SCATTER:
+            memory_usage['time_unit'] = memory_usage.index
+            cols = memory_usage.columns[0:-1]
+            ax = memory_usage.plot(kind='scatter', x='time_unit', y=cols[0], label=cols[0], color=next(color_iterator), figsize=(12, 8))
+            for col in cols[1:]:
+                ax = memory_usage.plot(kind='scatter', x='time_unit', y=col, label=col, color=next(color_iterator), ax=ax)
+
+        plt.title(f"Time vs Memory usages")
+        plt.xlabel(f"Time ({time_unit.value})")
+        plt.ylabel(f"Memory Usage ({memory_unit.value})")
         plt.tight_layout(pad=4)
         
         if export:
