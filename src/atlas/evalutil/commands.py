@@ -55,7 +55,7 @@ class ChartCommand(CommandBase):
         super().__init__(args)
         validators.validate_input_directory()
 
-    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
+    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, y_limit=None) -> None:
         # get data
         time_usage = data.get_time_usage()
         scenario_sizes = data.get_scenario_sizes()
@@ -89,6 +89,8 @@ class ChartCommand(CommandBase):
         plt.xlabel("Scenario Names")
         plt.ylabel(f"Time ({time_unit.value}) / Size ({memory_unit.value})")
         plt.xticks(range(time_usage.index.size), time_usage.index, rotation=45)
+        if y_limit:
+            plt.ylim(*y_limit)
         plt.tight_layout(pad=4)
 
         if export:
@@ -99,7 +101,7 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG) -> None:
+    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None) -> None:
         # get data
         memory_usage = data.get_memory_usage()    
 
@@ -129,6 +131,10 @@ class ChartCommand(CommandBase):
         plt.title(f"Time vs Memory usages")
         plt.xlabel(f"Time ({time_unit.value})")
         plt.ylabel(f"Memory Usage ({memory_unit.value})")
+        if x_limit:
+            plt.xlim(*x_limit)
+        if y_limit:
+            plt.ylim(*y_limit)
         plt.tight_layout(pad=4)
         
         if export:

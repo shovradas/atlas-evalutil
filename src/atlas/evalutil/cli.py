@@ -36,6 +36,8 @@ def build_parser():
     chart_parser.add_argument('--memory-unit', '-mu', type=MemoryUnit, required=False, default=MemoryUnit.MEGABYTE, help=f"unit of ram usage in {{{', '.join([e.value for e in MemoryUnit])}}} (default: {MemoryUnit.MEGABYTE.value})")
     chart_parser.add_argument('--time-unit', '-tu', type=TimeUnit, required=False, default=TimeUnit.SECOND, help=f"unit of time in {{{', '.join([e.value for e in TimeUnit])}}} (default: {TimeUnit.SECOND.value})")
     chart_parser.add_argument('--chart-type', '-ct', type=ChartType, required=False, default=ChartType.LINE, help=f"type of chart within {{{', '.join([e.value for e in ChartType])}}} (default: {ChartType.LINE.value})")
+    chart_parser.add_argument('--x-limit', '-xl', type=lambda x: map(int, x.split(",")), metavar='MIN,MAX', required=False, help=f"limit of x-axis in format of min,max (example: 0,100 etc.)")
+    chart_parser.add_argument('--y-limit', '-yl', type=lambda x: map(int, x.split(",")), metavar='MIN,MAX', required=False, help=f"limit of y-axis in format of min,max (example: 0,100 etc.)")
 
     # config command
     config_parser = subparsers.add_parser('config', description='Config Command', help='config management')
