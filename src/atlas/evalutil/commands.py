@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from atlas.evalutil import data
 from atlas.evalutil import validators
+from atlas.evalutil.color_utils import generate_gradient_colors
 from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
 from atlas.evalutil.export_utils import ExportFormat
@@ -66,9 +67,9 @@ class ChartCommand(CommandBase):
         # Formatting
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='index', inplace=True)
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
-        time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()        
+        time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
 
-        colors = (c for c in ['red', 'green', 'blue', 'cyan'])
+        color_iterator = generate_gradient_colors(skip=3)
         # display and/or save
         time_usage.plot(
             figsize=(12, 8),
@@ -78,7 +79,7 @@ class ChartCommand(CommandBase):
             ylabel=f"Time ({time_unit.value}) / Size ({memory_unit.value})",
             xticks=range(time_usage.index.size),
             linewidth=2,
-            color={col: next(colors) for col in sorted(time_usage.columns)}
+            color={col: next(color_iterator) for col in sorted(time_usage.columns)}
         )
         plt.tight_layout(pad=4)
 
@@ -102,7 +103,7 @@ class ChartCommand(CommandBase):
         memory_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         memory_usage = memory_usage[memory_usage.columns[::-1]]
 
-        colors = (c for c in ['black','darkgray','brown','burlywood','magenta','blueviolet','purple', 'lightgreen','darkseagreen', 'green', 'cyan', 'blue', 'darkorange', 'red'])
+        color_iterator = generate_gradient_colors()
         # display and/or save
         memory_usage.plot(
             figsize=(12, 8),
@@ -110,7 +111,7 @@ class ChartCommand(CommandBase):
             xlabel=f"Time ({time_unit.value})",
             ylabel=f"Memory Usage ({memory_unit.value})",
             linewidth=2,
-            color={col: next(colors) for col in memory_usage.columns}          
+            color={col: next(color_iterator) for col in memory_usage.columns}          
         )
         plt.tight_layout(pad=4)
         
