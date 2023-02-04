@@ -188,6 +188,28 @@ A combination of options is also possible
 atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export
 atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export --export-format "pdf"
 ```
+
+There some further options for localization using `--x-limit` and `--y-limit`
+```bash
+atlas-evalutil chart --memory-usage --x-limit 0,60 --y-limit 33,36
+```
+![time_usage|320x271](./docs/screen-shots/memory_usage_localized.png)
+
+
+Here is a **special case** for memory usage where the x axis (time) can be scaled to percentage
+```bash
+atlas-evalutil chart --memory-usage --x-scaled
+```
+![time_usage|320x271](./docs/screen-shots/memory_usage_scaled.png)
+
+It is also possible to switch the chart type
+```bash
+atlas-evalutil chart --time-usage --chart-type scatter
+```
+![time_usage|320x271](./docs/screen-shots/time_usage_scatter.png)
+
+
+
 #### Options
 - `--help (-h)`: Displays help information.
 - `--input-version (-v)`: Not needed if an input directory contains the required input items directly. However the input directory can have multiple version of evaluation data organized into directories as v0, v1, v2 etc. ([see input directory structure](#inputs)). In such a scenario this option is required to specify the version of input data to be selected.
