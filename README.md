@@ -199,6 +199,10 @@ atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export 
 - `--memory-unit (-mu)`: Sets memory unit for relevant axis of the desired chart. See help for possible options.
 - `--export (-e)`: Saves the chart as a SVG file in output directory
 - `--export-format (-f)`: Format of exported chart. See help for possible options.
+- `--chart-type (-ct)`: Specifies the type of the chart to generate. Currently supported `line` and `scatter`. Default is `line`
+- `--x-limit (-xl)`: Limit of x-axis in format of `min,max` (example: 0,100). Helpful for localization.
+- `--y-limit (-yl)` Limit of y-axis in format of `min,max` (example: 0,100). Helpful for localization. (for memory usage only)
+- `--x-scaled (-xs)`: Scale x-axis (time) to percentage (for memory usage only)
 
 
 ### config
