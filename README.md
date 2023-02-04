@@ -86,7 +86,7 @@ input
 
 
 ## Outputs
-When `--export` option is specified, the output is stored at default output directory or directory specified through `--output-dir` option. See [here](#global-options) for more information. A typical directory structure is as follows:
+When `--export` option is specified, the output is stored at default output directory or directory specified through `--output-dir` option. See [scenario](#scenario) or [chart](#chart) options for more information. A typical directory structure is as follows:
 ~~~
 output
 |___ memory_usage.svg
@@ -146,7 +146,7 @@ atlas-evalutil scenario --export
 - `--help (-h)`: Displays help information.
 - `--input-version (-v)`: Not needed if an input directory contains the required input items directly. However the input directory can have multiple version of evaluation data organized into directories as v0, v1, v2 etc. ([see input directory structure](#inputs)). In such a scenario this option is required to specify the version of input data to be selected.
 - `--input-dir (-i)`: Sets the path of input directory (default: data/input). If `--input-version` is specified then a sub directory with the version name is expected inside the input directory.
-- `--output-dir (-o)`: Sets the path of the output directory used by `--save` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
+- `--output-dir (-o)`: Sets the path of the output directory used by `--export` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
 - `--export (-e)`: Saves the list of scenario names in output directory as text file
 
 
@@ -165,7 +165,7 @@ atlas-evalutil chart --time-usage
 ```
 ![time_usage|320x271](./docs/screen-shots/time_usage.png)
 
-You can optionally save the output into output directory using `--save` options.
+You can optionally save the output into output directory using `--export` options.
 ```bash
 atlas-evalutil chart --time-usage --export
 ```
@@ -192,7 +192,7 @@ atlas-evalutil chart --memory-usage --time-unit "m" --memory-unit "GB" --export 
 - `--help (-h)`: Displays help information.
 - `--input-version (-v)`: Not needed if an input directory contains the required input items directly. However the input directory can have multiple version of evaluation data organized into directories as v0, v1, v2 etc. ([see input directory structure](#inputs)). In such a scenario this option is required to specify the version of input data to be selected.
 - `--input-dir (-i)`: Sets the path of input directory (default: data/input). If `--input-version` is specified then a sub directory with the version name is expected inside the input directory.
-- `--output-dir (-o)`: Sets the path of the output directory used by `--save` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
+- `--output-dir (-o)`: Sets the path of the output directory used by `--export` option (default: data/output). If `--input-version` is specified then a sub directory with the version name is created.
 - `--time-usage (-t)`: Displays the time usage chart
 - `--memory-usage (-m)`: Displays the memory usage chart
 - `--time-unit (-tu)`: Sets time unit for relevant axis of the desired chart. See help for possible options.
