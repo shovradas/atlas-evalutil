@@ -1,6 +1,7 @@
 import inspect
 from pathlib import Path
 import matplotlib.pyplot as plt
+import pandas
 
 from atlas.evalutil import data
 from atlas.evalutil import validators
@@ -74,6 +75,7 @@ class ChartCommand(CommandBase):
         # display and/or save
         if chart_type == ChartType.LINE:
             time_usage.plot(
+                kind='line',
                 figsize=(12, 8),
                 linewidth=2,
                 color={col: next(color_iterator) for col in sorted(time_usage.columns)}
@@ -101,7 +103,7 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None) -> None:
+    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None, x_scaled=None) -> None:
         # get data
         memory_usage = data.get_memory_usage()    
 
@@ -113,14 +115,28 @@ class ChartCommand(CommandBase):
         memory_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         memory_usage = memory_usage[memory_usage.columns[::-1]]
 
+        if x_scaled:
+            pandas.set_option('display.max_rows', None)
+            dfs = []
+            for col in memory_usage.columns:
+                df = memory_usage[col].dropna()
+                df.index = (df.index/df.index.max()*100).astype(int)
+                df = df.groupby(df.index).mean()
+                dfs.append(df)
+            memory_usage = pandas.concat(dfs, axis='columns')            
+
         color_iterator = generate_gradient_colors()
         # display and/or save
         if chart_type == ChartType.LINE:
-            memory_usage.plot(
+            if x_scaled:
+                memory_usage.interpolate(method='linear', inplace=True)
+                
+            ax = memory_usage.plot(
+                kind='line',
                 figsize=(12, 8),
                 linewidth=2,
                 color={col: next(color_iterator) for col in memory_usage.columns}          
-            )
+            )            
         elif chart_type == ChartType.SCATTER:
             memory_usage['time_unit'] = memory_usage.index
             cols = memory_usage.columns[0:-1]
@@ -129,14 +145,18 @@ class ChartCommand(CommandBase):
                 ax = memory_usage.plot(kind='scatter', x='time_unit', y=col, label=col, color=next(color_iterator), ax=ax)
 
         plt.title(f"Time vs Memory usages")
-        plt.xlabel(f"Time ({time_unit.value})")
+        plt.xlabel(f"Time ({'%' if x_scaled else time_unit.value})")
         plt.ylabel(f"Memory Usage ({memory_unit.value})")
         if x_limit:
             plt.xlim(*x_limit)
         if y_limit:
-            plt.ylim(*y_limit)
+            plt.ylim(*y_limit)        
+
+        if x_scaled:
+            ax.legend(bbox_to_anchor=(1.0, 1.0))
+
         plt.tight_layout(pad=4)
-        
+
         if export:
             Path(config['output_dir']).mkdir(parents=True, exist_ok=True)        
             export_path = f"{config['output_dir']}/memory_usage.{export_format.value}"
