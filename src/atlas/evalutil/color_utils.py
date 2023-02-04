@@ -16,5 +16,9 @@ GRADIENT_COLORS = [
 ]
 
 def generate_gradient_colors(skip=0):
-    for i in range(0, len(GRADIENT_COLORS), skip+1):
+    n = len(GRADIENT_COLORS)
+    i, step = 0, skip+1
+    while i<n:
         yield GRADIENT_COLORS[i]
+        i += step
+        i = i if i<n else 0

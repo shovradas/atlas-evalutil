@@ -71,7 +71,7 @@ class ChartCommand(CommandBase):
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
 
-        color_iterator = generate_gradient_colors(skip=2)
+        color_iterator = generate_gradient_colors(skip=3)
         # display and/or save
         if chart_type == ChartType.LINE:
             time_usage.plot(
@@ -150,7 +150,7 @@ class ChartCommand(CommandBase):
         if x_limit:
             plt.xlim(*x_limit)
         if y_limit:
-            plt.ylim(*y_limit)        
+            plt.ylim(*y_limit) 
 
         if x_scaled:
             ax.legend(bbox_to_anchor=(1.0, 1.0))
