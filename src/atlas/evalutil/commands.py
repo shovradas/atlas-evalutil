@@ -63,7 +63,7 @@ class ChartCommand(CommandBase):
         super().__init__(args)
         validators.validate_input_directory()
 
-    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, y_limit=None) -> None:
+    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, y_limit=None, line_width=3) -> None:
         # get data
         time_usage = data.get_time_usage()
         scenario_sizes = data.get_scenario_sizes()
@@ -84,7 +84,7 @@ class ChartCommand(CommandBase):
             time_usage.plot(
                 kind='line',
                 figsize=(12, 8),
-                linewidth=3,
+                linewidth=line_width,
                 color={col: next(color_iterator) for col in sorted(time_usage.columns)}
             )
         elif chart_type == ChartType.SCATTER:
@@ -111,7 +111,7 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None, x_scaled=None) -> None:
+    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None, x_scaled=None, line_width=3) -> None:
         # get data
         memory_usage = data.get_memory_usage()    
 
@@ -142,7 +142,7 @@ class ChartCommand(CommandBase):
             ax = memory_usage.plot(
                 kind='line',
                 figsize=(12, 8),
-                linewidth=3,
+                linewidth=line_width,
                 color={col: next(color_iterator) for col in memory_usage.columns}          
             )            
         elif chart_type == ChartType.SCATTER:
