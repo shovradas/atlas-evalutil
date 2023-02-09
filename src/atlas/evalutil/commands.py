@@ -14,6 +14,10 @@ from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
 from atlas.evalutil.export_utils import ExportFormat
 
+plt.rc('font', size=18)          # controls default text sizes
+plt.rc('xtick', labelsize=20)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=20)    # fontsize of the tick labels
+plt.rc('legend',fontsize=13) # using a size in points
 
 class CommandBase:
     def __init__(self, args: dict) -> None:
@@ -137,7 +141,7 @@ class ChartCommand(CommandBase):
             ax = memory_usage.plot(
                 kind='line',
                 figsize=(12, 8),
-                linewidth=2,
+                linewidth=3,
                 color={col: next(color_iterator) for col in memory_usage.columns}          
             )            
         elif chart_type == ChartType.SCATTER:
@@ -155,10 +159,10 @@ class ChartCommand(CommandBase):
         if y_limit:
             plt.ylim(*y_limit) 
 
-        if x_scaled:
-            ax.legend(bbox_to_anchor=(1.0, 1.0))
+        # if x_scaled:
+        ax.legend(bbox_to_anchor=(1.0, 1.0))
 
-        plt.tight_layout(pad=4)
+        plt.tight_layout(pad=2)
 
         if export:
             Path(config['output_dir']).mkdir(parents=True, exist_ok=True)        
@@ -186,7 +190,7 @@ class ChartCommand(CommandBase):
         res.anova_stat(df=d_melt, res_var='value', anova_model='value~C(Genotype)+C(years)+C(Genotype):C(years)')
         print(res.anova_summary)
 
-    def memory_usage_anova(self):
+    def memory_usage_anova_from_file(self):
         memory_usages = pandas.read_csv('data/input/memory_usages.csv')
 
         print(pg.homoscedasticity(memory_usages, dv='mean', group='version'))
@@ -218,7 +222,8 @@ class ChartCommand(CommandBase):
         print('-'*79)
         print(pg.anova(data=memory_usages, dv='max', between=['version', 'scenario'], detailed=True))
 
-
+    def memory_usage_anova(self):
+        memory_usage = data.get_memory_usage_anova()
 
     def memory_usage_anova1(self, memory_unit: MemoryUnit):  
         base_dir = Path('data/input')
