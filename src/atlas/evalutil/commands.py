@@ -14,10 +14,10 @@ from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
 from atlas.evalutil.export_utils import ExportFormat
 
-plt.rc('font', size=18)          # controls default text sizes
-plt.rc('xtick', labelsize=20)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=20)    # fontsize of the tick labels
-plt.rc('legend',fontsize=13) # using a size in points
+plt.rc('font', size=20)          # controls default text sizes
+# plt.rc('xtick', labelsize=20)    # fontsize of the tick labels
+# plt.rc('ytick', labelsize=20)    # fontsize of the tick labels
+# plt.rc('legend',fontsize=18) # using a size in points
 
 class CommandBase:
     def __init__(self, args: dict) -> None:
@@ -84,7 +84,7 @@ class ChartCommand(CommandBase):
             time_usage.plot(
                 kind='line',
                 figsize=(12, 8),
-                linewidth=2,
+                linewidth=3,
                 color={col: next(color_iterator) for col in sorted(time_usage.columns)}
             )
         elif chart_type == ChartType.SCATTER:
@@ -100,7 +100,8 @@ class ChartCommand(CommandBase):
         plt.xticks(range(time_usage.index.size), time_usage.index, rotation=45)
         if y_limit:
             plt.ylim(*y_limit)
-        plt.tight_layout(pad=4)
+
+        plt.tight_layout(pad=2)
 
         if export:
             Path(config['output_dir']).mkdir(parents=True, exist_ok=True)
