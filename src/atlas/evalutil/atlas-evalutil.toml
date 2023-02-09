@@ -1,2 +1,2 @@
-input_dir = "data/input"
-output_dir = "data/output"
+input_dir = "data/sample/input"
+output_dir = "data/sample/output"

@@ -16,7 +16,8 @@ setup(
     install_requires=[
         'matplotlib==3.6.2',
         'pandas==1.5.2',
-        'tomlkit==0.11.6'
+        'tomlkit==0.11.6',
+        'pingouin==0.5.3'
     ],
     extras_require={
         'test': ['pytest==7.2.0'],
