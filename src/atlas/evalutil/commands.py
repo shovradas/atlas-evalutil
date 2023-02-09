@@ -101,7 +101,7 @@ class ChartCommand(CommandBase):
         if y_limit:
             plt.ylim(*y_limit)
 
-        plt.tight_layout(pad=2)
+        plt.tight_layout(pad=0.5)
 
         if export:
             Path(config['output_dir']).mkdir(parents=True, exist_ok=True)
@@ -163,7 +163,7 @@ class ChartCommand(CommandBase):
         # if x_scaled:
         ax.legend(bbox_to_anchor=(1.0, 1.0))
 
-        plt.tight_layout(pad=2)
+        plt.tight_layout(pad=0.5)
 
         if export:
             Path(config['output_dir']).mkdir(parents=True, exist_ok=True)        
