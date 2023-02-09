@@ -40,8 +40,8 @@ def build_parser():
     chart_parser.add_argument('--x-limit', '-xl', type=lambda x: map(int, x.split(",")), metavar='MIN,MAX', required=False, help=f"limit of x-axis in format of min,max (example: 0,100 etc.)")
     chart_parser.add_argument('--y-limit', '-yl', type=lambda x: map(int, x.split(",")), metavar='MIN,MAX', required=False, help=f"limit of y-axis in format of min,max (example: 0,100 etc.)")
     chart_parser.add_argument('--x-scaled', '-xs', action="store_true", required=False, help=f"scale x-axis to percentage for memory usage")
-    # chart_parser.add_argument('--font-size', '-fs', type=int, required=False, default=20, help=f"font size of chart (default: 20)")
-    chart_parser.add_argument('--line-width', '-lw', type=int, required=False, default=3, help=f"font size of chart (default: 20)")
+    chart_parser.add_argument('--font-size', '-fs', type=int, required=False, default=20, help=f"font size of chart (default: 20)")
+    chart_parser.add_argument('--line-width', '-lw', type=int, required=False, default=3, help=f"line width (default: 3)")
 
     # config command
     config_parser = subparsers.add_parser('config', description='Config Command', help='config management')

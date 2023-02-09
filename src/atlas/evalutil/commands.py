@@ -14,7 +14,7 @@ from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
 from atlas.evalutil.export_utils import ExportFormat
 
-plt.rc('font', size=20)          # controls default text sizes
+# plt.rc('font', size=20)          # controls default text sizes
 # plt.rc('xtick', labelsize=20)    # fontsize of the tick labels
 # plt.rc('ytick', labelsize=20)    # fontsize of the tick labels
 # plt.rc('legend',fontsize=18) # using a size in points
@@ -63,7 +63,7 @@ class ChartCommand(CommandBase):
         super().__init__(args)
         validators.validate_input_directory()
 
-    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, y_limit=None, line_width=3) -> None:
+    def time_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, y_limit=None, line_width=3, font_size=20) -> None:
         # get data
         time_usage = data.get_time_usage()
         scenario_sizes = data.get_scenario_sizes()
@@ -78,6 +78,7 @@ class ChartCommand(CommandBase):
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
 
+        plt.rc('font', size=font_size)          # controls default text sizes
         color_iterator = generate_solid_colors()
         # display and/or save
         if chart_type == ChartType.LINE:
@@ -101,6 +102,7 @@ class ChartCommand(CommandBase):
         if y_limit:
             plt.ylim(*y_limit)
 
+        
         plt.tight_layout(pad=0.5)
 
         if export:
@@ -111,7 +113,7 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None, x_scaled=None, line_width=3) -> None:
+    def memory_usage(self, chart_type: ChartType, time_unit: TimeUnit, memory_unit: MemoryUnit, export: bool=False, export_format=ExportFormat.SVG, x_limit=None, y_limit=None, x_scaled=None, line_width=3, font_size=20) -> None:
         # get data
         memory_usage = data.get_memory_usage()    
 
@@ -133,6 +135,8 @@ class ChartCommand(CommandBase):
                 dfs.append(df)
             memory_usage = pandas.concat(dfs, axis='columns')            
 
+        plt.rc('font', size=font_size)          # controls default text sizes
+        
         color_iterator = generate_gradient_colors()
         # display and/or save
         if chart_type == ChartType.LINE:
