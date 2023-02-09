@@ -9,7 +9,7 @@ import pingouin as pg
 from atlas.evalutil import data
 from atlas.evalutil import validators
 from atlas.evalutil.chart_utils import ChartType
-from atlas.evalutil.color_utils import generate_gradient_colors
+from atlas.evalutil.color_utils import generate_gradient_colors, generate_solid_colors
 from atlas.evalutil.config_handler import config
 from atlas.evalutil.unit_utils import TimeUnit, MemoryUnit, time_factor, memory_factor
 from atlas.evalutil.export_utils import ExportFormat
@@ -78,7 +78,7 @@ class ChartCommand(CommandBase):
         time_usage.sort_index(key=lambda x: x.str.lower().str.len(), axis='columns', inplace=True)
         time_usage.columns = time_usage.columns.str.replace('_', ' ').str.title()
 
-        color_iterator = generate_gradient_colors(skip=3)
+        color_iterator = generate_solid_colors()
         # display and/or save
         if chart_type == ChartType.LINE:
             time_usage.plot(

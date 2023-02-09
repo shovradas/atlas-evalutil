@@ -1,3 +1,10 @@
+SOLID_COLORS = [
+    'red',
+    'green',
+    'blue',
+    'cyan',
+]
+
 GRADIENT_COLORS = [
     '#22e8d4',
     '#25adc4',
@@ -20,5 +27,14 @@ def generate_gradient_colors(skip=0):
     i, step = 0, skip+1
     while i<n:
         yield GRADIENT_COLORS[i]
+        i += step
+        i = i if i<n else 0
+
+
+def generate_solid_colors(skip=0):
+    n = len(SOLID_COLORS)
+    i, step = 0, skip+1
+    while i<n:
+        yield SOLID_COLORS[i]
         i += step
         i = i if i<n else 0
