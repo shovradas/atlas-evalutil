@@ -136,7 +136,7 @@ class ChartCommand(CommandBase):
             memory_usage = pandas.concat(dfs, axis='columns')            
 
         plt.rc('font', size=font_size)          # controls default text sizes
-        
+
         color_iterator = generate_gradient_colors()
         # display and/or save
         if chart_type == ChartType.LINE:
@@ -177,101 +177,29 @@ class ChartCommand(CommandBase):
 
         plt.show()
 
-    def memory_usage_anova2(self):
-        import pandas as pd
-        import seaborn as sns
-        # load data file
-        d = pd.read_csv("https://reneshbedre.github.io/assets/posts/anova/twowayanova.txt", sep="\t")
-        # reshape the d dataframe suitable for statsmodels package 
-        # you do not need to reshape if your data is already in stacked format. Compare d and d_melt tables for detail 
-        # understanding 
-        d_melt = pd.melt(d, id_vars=['Genotype'], value_vars=['1_year', '2_year', '3_year'])
-        # replace column names
-        d_melt.columns = ['Genotype', 'years', 'value']
-        print(d_melt)
+    def memory_usage_confidence(self, export: bool=False, export_format=ExportFormat.SVG, font_size=26):
+        df = pandas.read_csv('mem_usage_results.csv')
+        df['mean'] = df[['lower', 'upper']].mean(axis='columns')
+        df['dy'] = df['mean'] - df['lower']
+        df.sort_values(by='scenario', key=lambda x: x.str.lower().str.len(), inplace=True)
+        # print(df)
 
-        from bioinfokit.analys import stat
-        res = stat()
-        res.anova_stat(df=d_melt, res_var='value', anova_model='value~C(Genotype)+C(years)+C(Genotype):C(years)')
-        print(res.anova_summary)
+        plt.rc('font', size=font_size)        
+        plt.errorbar(df['scenario'], df['mean'], yerr=df['dy'], fmt=",k", ecolor='black', elinewidth=10, capsize=20)
+        plt.gcf().set_size_inches(12, 11)
+        plt.xticks(rotation=45)
+        plt.xlabel(f"Scenarios")
+        plt.ylabel(f"Confidence Intervals")
 
-    def memory_usage_anova_from_file(self):
-        memory_usages = pandas.read_csv('data/input/memory_usages.csv')
-
-        print(pg.homoscedasticity(memory_usages, dv='mean', group='version'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='mean', group='scenario'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='max', group='version'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='max', group='scenario'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='mean_log10', group='version'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='mean_log10', group='scenario'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='max_log10', group='version'))
-        print('-'*79)
-        print(pg.homoscedasticity(memory_usages, dv='max_log10', group='scenario'))        
-        print('-'*79)
+        plt.tight_layout(pad=0.5)
         
-        print(pg.normality(memory_usages, method='normaltest'))
-        print('-'*79)
+        if export:
+            Path(config['output_dir']).mkdir(parents=True, exist_ok=True)        
+            export_path = f"{config['output_dir']}/memory_usage_confidence.{export_format.value}"
+            plt.savefig(export_path)
+            print(f"Memory usage confidence exported at {Path(export_path).absolute().as_uri()}")
 
-        print(pg.sphericity(memory_usages, dv='mean', subject='version', within='scenario'))
-        print('-'*79)
-
-        print(pg.anova(data=memory_usages, dv='max', between='version', detailed=True))
-        print('-'*79)
-        print(pg.anova(data=memory_usages, dv='max', between='scenario', detailed=True))
-        print('-'*79)
-        print(pg.anova(data=memory_usages, dv='max', between=['version', 'scenario'], detailed=True))
-
-    def memory_usage_anova(self):
-        memory_usage = data.get_memory_usage_anova()
-
-    def memory_usage_anova1(self, memory_unit: MemoryUnit):  
-        base_dir = Path('data/input')
-        _, dirs, _ = next(os.walk(base_dir))
-
-        memory_usages = []
-        for d in dirs:
-            config['input_dir'] = base_dir / d ; print("Reading directory: ", config['input_dir'])
-            memory_usage = data.get_memory_usage()
-
-            memory_usage = memory_usage.T
-            memory_usage['mean'] = memory_usage.mean(axis='columns', numeric_only=True)
-            memory_usage['max'] = memory_usage.max(axis='columns', numeric_only=True)
-            memory_usage = memory_usage[['mean', 'max']]
-            memory_usage['version'] = d
-
-            memory_usages.append(memory_usage)
-
-        memory_usages = pandas.concat(memory_usages)
-        memory_usages.reset_index(names='scenario', inplace=True)
-        memory_usages['mean_log10'] = numpy.log10(memory_usages['mean'])
-        memory_usages['max_log10'] = numpy.log10(memory_usages['max'])
-        memory_usages = memory_usages.loc[:, ['version', 'scenario', 'mean', 'mean_log10', 'max', 'max_log10']]
-        # print(memory_usages)
-
-        print(memory_usages)
-        # memory_usages.to_csv('data/input/memory_usages.csv', index=False)
-        
-
-        # summary = pingouin.anova(data=memory_usages, dv='max', between=['version', 'scenario'], detailed=True)
-        # print(summary)
-
-
-        # from bioinfokit.analys import stat
-        # res = stat()
-        # res.anova_stat(df=memory_usages, res_var='mean', anova_model='mean~C(version)+C(scenario)')
-        # print(res.anova_summary)
-
-        # import statsmodels.api as sm
-        # from statsmodels.formula.api import ols
-        # model = ols('mean~C(version)+C(scenario)', data=memory_usages).fit()
-        # anova_table = sm.stats.anova_lm(model, typ=2)
-        # print(anova_table)
+        plt.show()
 
 
 

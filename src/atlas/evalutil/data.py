@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pandas
 from pandas import DataFrame
+import numpy as np
 
 from atlas.evalutil.config_handler import config
 
@@ -84,29 +85,31 @@ def get_memory_usage_anova() -> DataFrame:
         )
     )
 
-    print(data_frame)
-
     scenario_groups = data_frame.groupby(by='scenario_name')    
-    data_frame = pandas.DataFrame()
+    transformed_groups = []
     for scenario_name, scenario_group in scenario_groups:
         # scenario_name = '10x10'
         # scenario_group = scenario_groups.get_group(scenario_name)
-        print(scenario_group)
         
         scenario_group = scenario_group.dropna(axis='columns')                  # example: scenario 10x10 has 10 host only. therefore dropping 7 columns incase of 17 hosts
         scenario_group = scenario_group.drop(columns=['scenario_name'])
         scenario_group = pandas.concat([DataFrame(scenario_group[c].tolist()).T for c in scenario_group.columns])
-        print(scenario_group)
         scenario_group.dropna(axis='index', inplace=True)                       # some host might take more seconds for the same scenario in different runs. therefore keeping those extra rows out of the average
-
-        print(scenario_group)        
+    
         scenario_group = scenario_group.groupby(scenario_group.index).mean()
-        series = scenario_group.mean(axis='columns')
-        print(scenario_group)
+        
+        scenario_group = scenario_group.T        
+        scenario_group['scenario'] = scenario_name
+        scenario_group['mean'] = scenario_group.mean(axis='columns', numeric_only=True)
+        scenario_group['max'] = scenario_group.max(axis='columns', numeric_only=True)
+        scenario_group['median'] = scenario_group.median(axis='columns', numeric_only=True)
+        scenario_group['mean_log10'] = np.log10(scenario_group['mean'])
+        scenario_group['max_log10'] = np.log10(scenario_group['max'])
+        scenario_group['median_log10'] = np.log10(scenario_group['median'])
+        
+        scenario_group = scenario_group[['scenario', 'mean', 'max', 'median', 'mean_log10', 'max_log10', 'median_log10']]
 
-        data_frame[scenario_name] = series
-        break
+        transformed_groups.append(scenario_group)
 
-    print(data_frame)
-
+    data_frame = pandas.concat(transformed_groups, ignore_index=True)
     return data_frame

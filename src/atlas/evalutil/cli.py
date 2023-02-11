@@ -33,7 +33,7 @@ def build_parser():
     group = chart_parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--time-usage', '-t', dest='action', action="store_const", const='time_usage', help='displays chart for time usage')
     group.add_argument('--memory-usage', '-m', dest='action', action="store_const", const='memory_usage', help='displays chart for ram usage')
-    group.add_argument('--memory-usage-anova', '-a', dest='action', action="store_const", const='memory_usage_anova', help='ANOVA ananlysis for memory usage')
+    group.add_argument('--memory-usage-confidence', '-a', dest='action', action="store_const", const='memory_usage_confidence', help='Confidence ananlysis for memory usage')
     chart_parser.add_argument('--memory-unit', '-mu', type=MemoryUnit, required=False, default=MemoryUnit.MEGABYTE, help=f"unit of ram usage in {{{', '.join([e.value for e in MemoryUnit])}}} (default: {MemoryUnit.MEGABYTE.value})")
     chart_parser.add_argument('--time-unit', '-tu', type=TimeUnit, required=False, default=TimeUnit.SECOND, help=f"unit of time in {{{', '.join([e.value for e in TimeUnit])}}} (default: {TimeUnit.SECOND.value})")
     chart_parser.add_argument('--chart-type', '-ct', type=ChartType, required=False, default=ChartType.LINE, help=f"type of chart within {{{', '.join([e.value for e in ChartType])}}} (default: {ChartType.LINE.value})")
